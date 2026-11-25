@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#2563eb" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Inventario Aulas" />
+  <title>Inventario de Aulas</title>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%232563eb'/%3E%3Crect x='22' y='28' width='84' height='54' rx='8' fill='none' stroke='%23ffffff' stroke-width='8'/%3E%3Cpath d='M48 98h32M64 82v16' stroke='%23ffffff' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%232563eb'/%3E%3Crect x='22' y='28' width='84' height='54' rx='8' fill='none' stroke='%23ffffff' stroke-width='8'/%3E%3Cpath d='M48 98h32M64 82v16' stroke='%23ffffff' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="manifest" id="pwa-manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Inventario%20de%20Aulas%22%2C%22short_name%22%3A%22Inventario%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f8fafc%22%2C%22theme_color%22%3A%22%232563eb%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%2520viewBox%3D%270%25200%2520512%2520512%27%253E%253Crect%2520width%3D%27512%27%2520height%3D%27512%27%2520rx%3D%27112%27%2520fill%3D%27%25232563eb%27%2F%253E%253Crect%2520x%3D%2788%27%2520y%3D%27112%27%2520width%3D%27336%27%2520height%3D%27216%27%2520rx%3D%2732%27%2520fill%3D%27none%27%2520stroke%3D%27%2523ffffff%27%2520stroke-width%3D%2732%27%2F%253E%253Cpath%2520d%3D%27M192%2520392h128M256%2520328v64%27%2520stroke%3D%27%2523ffffff%27%2520stroke-width%3D%2732%27%2520stroke-linecap%3D%27round%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D" />
+
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --surface: #ffffff;
+      --surface-alt: #f8fafc;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --border: #cbd5e1;
+      --primary: #2563eb;
+      --primary-soft: #dbeafe;
+      --danger: #dc2626;
+      --danger-soft: #fee2e2;
+      --ok: #16a34a;
+      --ok-soft: #dcfce7;
+      --warn: #d97706;
+      --warn-soft: #fef3c7;
+      --radius: 14px;
+      --shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b1120;
+        --surface: #1e293b;
+        --surface-alt: #0f172a;
+        --text: #f8fafc;
+        --text-muted: #94a3b8;
+        --border: #334155;
+        --primary: #3b82f6;
+        --primary-soft: #1e3a8a;
+        --danger: #ef4444;
+        --danger-soft: #450a0a;
+        --ok: #22c55e;
+        --ok-soft: #052e16;
+        --warn: #f59e0b;
+        --warn-soft: #451a03;
+        --shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+      }
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.4;
+      padding-bottom: 88px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+
+    button, .btn {
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 16px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+      transition: transform 0.08s ease;
+    }
+
+    button:active { transform: scale(0.98); }
+
+    .btn-primary { background: var(--primary); color: #ffffff; width: 100%; }
+    .btn-ok { background: var(--ok); color: #ffffff; width: 100%; }
+    .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .btn-danger { background: var(--danger); color: #ffffff; }
+    .btn-danger-outline { background: var(--danger-soft); color: var(--danger); }
+    .btn-sm { min-height: 40px; padding: 8px 12px; font-size: 0.9rem; border-radius: 10px; }
+    .btn-icon {
+      min-height: 42px; min-width: 42px; padding: 8px;
+      background: var(--surface-alt); color: var(--text);
+      border: 1px solid var(--border); border-radius: 10px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .card.pending {
+      border-left: 4px solid var(--warn);
+    }
+
+    .card.reviewed {
+      border-left: 4px solid var(--ok);
+    }
+
+    .card.has-bad {
+      border-left: 4px solid var(--danger);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .stat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 8px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-num { font-size: 1.5rem; font-weight: 800; display: block; color: var(--primary); }
+    .stat-num.danger { color: var(--danger); }
+    .stat-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: block; margin-top: 2px; }
+
+    .search-box {
+      width: 100%;
+      padding: 13px 16px;
+      font-size: 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      margin-bottom: 14px;
+      min-height: 48px;
+    }
+
+    .search-box:focus, input:focus, select:focus, textarea:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: -1px;
+    }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .chip {
+      font-size: 0.78rem; font-weight: 600; padding: 4px 10px;
+      border-radius: 999px; background: var(--surface-alt);
+      border: 1px solid var(--border); color: var(--text-muted);
+    }
+    .chip.ok { background: var(--ok-soft); color: var(--ok); border-color: transparent; }
+    .chip.warn { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+    .chip.bad { background: var(--danger-soft); color: var(--danger); border-color: transparent; }
+    .chip.info { background: var(--primary-soft); color: var(--primary); border-color: transparent; }
+
+    .progress-wrap { margin-top: 10px; }
+    .progress-meta {
+      display: flex; justify-content: space-between;
+      font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: var(--text-muted);
+    }
+    .progress-bar {
+      height: 8px; background: var(--surface-alt); border-radius: 999px;
+      overflow: hidden; border: 1px solid var(--border);
+    }
+    .progress-fill { height: 100%; background: var(--primary); transition: width 0.25s ease; }
+    .progress-fill.done { background: var(--ok); }
+
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 0.92rem; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+    .form-hint { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%; padding: 12px 14px; font-size: 1rem; font-family: inherit;
+      border-radius: 12px; border: 1px solid var(--border);
+      background: var(--surface-alt); color: var(--text); min-height: 48px;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .seg-group { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; }
+    .seg-btn {
+      min-height: 46px; padding: 10px 8px; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--surface-alt);
+      color: var(--text); font-weight: 600; font-size: 0.92rem;
+    }
+    .seg-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+    .seg-btn.active-ok { background: var(--ok); color: #fff; border-color: var(--ok); }
+    .seg-btn.active-warn { background: var(--warn); color: #fff; border-color: var(--warn); }
+    .seg-btn.active-bad { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+    .sub-box {
+      margin-top: 10px; padding: 12px; border-radius: 12px;
+      background: var(--surface-alt); border: 1px dashed var(--border);
+    }
+
+    .section-title {
+      font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--text-muted); font-weight: 800; margin: 20px 0 10px;
+    }
+
+    .item-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .item-title { font-size: 1.12rem; font-weight: 800; margin: 0; }
+    .item-actions {
+      display: flex; gap: 8px; margin-top: 12px;
+      padding-top: 12px; border-top: 1px solid var(--border);
+    }
+    .item-actions button { flex: 1; }
+
+    .backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+    .backup-grid .full { grid-column: 1 / -1; }
+
+    .empty {
+      text-align: center; padding: 36px 20px; color: var(--text-muted);
+      background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius);
+    }
+    .empty-icon { font-size: 2.2rem; margin-bottom: 8px; display: block; }
+
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6);
+      display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 50;
+    }
+    .modal-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 20px; width: 100%; max-width: 380px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .modal-card h3 { margin: 0 0 8px; font-size: 1.1rem; }
+    .modal-card p { margin: 0 0 18px; color: var(--text-muted); font-size: 0.95rem; }
+    .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .toast {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: #0f172a; color: #ffffff; padding: 12px 18px;
+      border-radius: 999px; font-size: 0.9rem; font-weight: 600; z-index: 60;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25); max-width: 90%; text-align: center;
+    }
+
+    .hidden { display: none !important; }
+
+    .fab-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--surface); border-top: 1px solid var(--border);
+      padding: 12px 16px; z-index: 15;
+    }
+    .fab-inner { max-width: 600px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <button id="btn-back" class="btn-icon hidden" aria-label="Volver">←</button>
+    <h1 id="topbar-title">Inventario de Aulas</h1>
+  </header>
+
+  <main id="app" class="container"></main>
+
+  <div id="fab-bar" class="fab-bar hidden">
+    <div class="fab-inner" id="fab-content"></div>
+  </div>
+
+  <input type="file" id="import-file" accept=".json,application/json" class="hidden" />
+
+  <div id="modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <h3 id="modal-title">Confirmar</h3>
+      <p id="modal-msg"></p>
+      <div class="modal-actions">
+        <button id="modal-cancel" class="btn-secondary">Cancelar</button>
+        <button id="modal-confirm" class="btn-danger">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const STORAGE_KEY = 'inventario_aulas_v1';
+
+      let data = { aulas: [] };
+      let view = { name: 'home', aulaId: null, pcId: null };
+      let searchAula = '';
+      let searchPc = '';
+      let modalCallback = null;
+      let toastTimer = null;
+
+      // ---------- ALMACENAMIENTO SEGURO ----------
+      function loadData() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) { data = { aulas: [] }; return; }
+          const parsed = JSON.parse(raw);
+          data = (parsed && Array.isArray(parsed.aulas)) ? parsed : { aulas: [] };
+        } catch (err) {
+          console.error('Error leyendo almacenamiento:', err);
+          data = { aulas: [] };
+          showToast('No se pudo leer el almacenamiento local.');
+        }
+      }
+
+      function saveData(msg) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          if (msg) showToast(msg);
+        } catch (err) {
+          console.error('Error guardando datos:', err);
+          showToast('Error al guardar: espacio lleno o modo privado.');
+        }
+      }
+
+      // ---------- UTILIDADES ----------
+      function uid() {
+        return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      }
+
+      function esc(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+
+      function showToast(text) {
+        const el = document.getElementById('toast');
+        el.textContent = text;
+        el.classList.remove('hidden');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.add('hidden'), 2400);
+      }
+
+      function confirmAction(title, msg, confirmText, onConfirm) {
+        document.getElementById('modal-title').textContent = title;
+        document.getElementById('modal-msg').textContent = msg;
+        document.getElementById('modal-confirm').textContent = confirmText || 'Eliminar';
+        modalCallback = onConfirm;
+        document.getElementById('modal').classList.remove('hidden');
+      }
+
+      document.getElementById('modal-cancel').addEventListener('click', () => {
+        document.getElementById('modal').classList.add('hidden');
+        modalCallback = null;
+      });
+
+      document.getElementById('modal-confirm').addEventListener('click', () => {
+        document.getElementById('modal').classList.add('hidden');
+        if (typeof modalCallback === 'function') modalCallback();
+        modalCallback = null;
+      });
+
+      function getAula(id) {
+        return data.aulas.find(a => a.id === id) || null;
+      }
+
+      function createDefaultPc(codigo, revisada) {
+        return {
+          id: uid(),
+          codigo: codigo,
+          revisada: !!revisada,
+          video: 'Integrada',
+          procesador: '',
+          ram: '',
+          almacenamiento: { capacidad: '', unidad: 'GB', tipo: 'Sólido SSD' },
+          internet: true,
+          fuenteWatts: '',
+          teclado: { tiene: true, condicion: 'Buena' },
+          mouse: { tiene: true, condicion: 'Buena' },
+          monitor: { tiene: true, modelo: '', pulgadas: '', condicion: 'Buena' },
+          observaciones: ''
+        };
+      }
+
+      function isPcReviewed(pc) {
+        return pc.revisada !== false;
+      }
+
+      function hasBadPeripheral(pc) {
+        if (!isPcReviewed(pc)) return false;
+        const badTeclado = pc.teclado && pc.teclado.tiene && pc.teclado.condicion === 'Mala';
+        const badMouse = pc.mouse && pc.mouse.tiene && pc.mouse.condicion === 'Mala';
+        const monTiene = pc.monitor ? (pc.monitor.tiene !== false) : false;
+        const badMonitor = monTiene && pc.monitor.condicion === 'Mala';
+        return badTeclado || badMouse || badMonitor;
+      }
+
+      function suggestNextCode(pcs, fallbackPrefix) {
+        const defPrefix = (fallbackPrefix || 'pc').trim() || 'pc';
+        if (!pcs || pcs.length === 0) return `${defPrefix}1`;
+        const lastCode = (pcs[pcs.length - 1].codigo || '').trim();
+        const match = lastCode.match(/^(.*?)(\d+)$/);
+        if (match) {
+          const prefix = match[1];
+          const numStr = match[2];
+          let maxNum = parseInt(numStr, 10);
+          pcs.forEach(p => {
+            const m = (p.codigo || '').trim().match(/^(.*?)(\d+)$/);
+            if (m && m[1].toLowerCase() === prefix.toLowerCase()) {
+              const n = parseInt(m[2], 10);
+              if (n > maxNum) maxNum = n;
+            }
+          });
+          return prefix + String(maxNum + 1).padStart(numStr.length, '0');
+        }
+        return `${defPrefix}${pcs.length + 1}`;
+      }
+
+      function condClass(cond) {
+        if (cond === 'Buena') return 'ok';
+        if (cond === 'Regular') return 'warn';
+        if (cond === 'Mala') return 'bad';
+        return '';
+      }
+
+      // ---------- EXPORTAR / IMPORTAR ----------
+      function exportJSON() {
+        try {
+          const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+          const date = new Date().toISOString().slice(0, 10);
+          downloadBlob(blob, `inventario-aulas-${date}.json`);
+          showToast('Copia JSON descargada');
+        } catch (err) {
+          showToast('Error al exportar copia');
+        }
+      }
+
+      function triggerImportJSON() {
+        const input = document.getElementById('import-file');
+        input.value = '';
+        input.click();
+      }
+
+      document.getElementById('import-file').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const parsed = JSON.parse(reader.result);
+            if (!parsed || !Array.isArray(parsed.aulas)) {
+              showToast('El archivo no tiene un formato válido');
+              return;
+            }
+            confirmAction(
+              'Importar copia',
+              `Se reemplazarán los datos actuales por ${parsed.aulas.length} aula(s) del archivo. ¿Continuar?`,
+              'Importar',
+              () => {
+                data = parsed;
+                saveData('Copia importada correctamente');
+                goHome();
+              }
+            );
+          } catch (err) {
+            showToast('Archivo JSON inválido');
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      function csvCell(val) {
+        const s = val === null || val === undefined ? '' : String(val);
+        return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      }
+
+      function exportCSV() {
+        const headers = [
+          'Aula', 'PCs Declaradas', 'Proyector', 'Impresora', 'TV', 'Sillas', 'Cond. Sillas', 'Mesas', 'Cond. Mesas',
+          'Código PC', 'Estado Revisión', 'Placa Video', 'Procesador', 'RAM (GB)', 'Almacenamiento', 'Tipo Almacenamiento',
+          'Internet', 'Fuente (W)', 'Teclado', 'Cond. Teclado', 'Mouse', 'Cond. Mouse',
+          'Monitor', 'Monitor Marca/Modelo', 'Monitor Pulgadas', 'Cond. Monitor', 'Observaciones'
+        ];
+
+        const rows = [headers.map(csvCell).join(',')];
+        let totalPcs = 0;
+
+        data.aulas.forEach(aula => {
+          const pcs = aula.computadoras || [];
+          pcs.forEach(pc => {
+            totalPcs++;
+            const monTiene = pc.monitor ? (pc.monitor.tiene !== false) : false;
+            const row = [
+              aula.numero,
+              aula.totalComputadoras || pcs.length,
+              aula.proyector?.tiene ? `Sí (${aula.proyector.cantidad || 1})` : 'No',
+              aula.impresora?.tiene ? `Sí (${aula.impresora.cantidad || 1})` : 'No',
+              aula.tv?.tiene ? `Sí (${aula.tv.cantidad || 1})` : 'No',
+              aula.sillas?.tiene ? (aula.sillas.cantidad || 0) : 'No',
+              aula.sillas?.tiene ? (aula.sillas.condicion || '') : '',
+              aula.mesas?.tiene ? (aula.mesas.cantidad || 0) : 'No',
+              aula.mesas?.tiene ? (aula.mesas.condicion || '') : '',
+              pc.codigo || '',
+              isPcReviewed(pc) ? 'Revisada' : 'Pendiente',
+              pc.video || '',
+              pc.procesador || '',
+              pc.ram || '',
+              pc.almacenamiento?.capacidad ? `${pc.almacenamiento.capacidad} ${pc.almacenamiento.unidad || 'GB'}` : '',
+              pc.almacenamiento?.tipo || '',
+              pc.internet ? 'Sí' : 'No',
+              pc.fuenteWatts || '',
+              pc.teclado?.tiene ? 'Sí' : 'No',
+              pc.teclado?.tiene ? (pc.teclado.condicion || '') : '',
+              pc.mouse?.tiene ? 'Sí' : 'No',
+              pc.mouse?.tiene ? (pc.mouse.condicion || '') : '',
+              monTiene ? 'Sí' : 'No',
+              monTiene ? (pc.monitor?.modelo || '') : '',
+              monTiene ? (pc.monitor?.pulgadas || '') : '',
+              monTiene ? (pc.monitor?.condicion || '') : '',
+              pc.observaciones || ''
+            ];
+            rows.push(row.map(csvCell).join(','));
+          });
+        });
+
+        if (totalPcs === 0) {
+          showToast('No hay computadoras registradas para exportar');
+          return;
+        }
+
+        const csvContent = '\uFEFF' + rows.join('\r\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const date = new Date().toISOString().slice(0, 10);
+        downloadBlob(blob, `inventario-computadoras-${date}.csv`);
+        showToast(`CSV exportado (${totalPcs} PCs)`);
+      }
+
+      function downloadBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      // ---------- NAVEGACIÓN ----------
+      function goHome() { view = { name: 'home', aulaId: null, pcId: null }; render(); window.scrollTo(0, 0); }
+      function goAula(aulaId) { searchPc = ''; view = { name: 'aula', aulaId, pcId: null }; render(); window.scrollTo(0, 0); }
+      function goAulaForm(aulaId) { view = { name: 'aula-form', aulaId: aulaId || null, pcId: null }; render(); window.scrollTo(0, 0); }
+      function goPcForm(aulaId, pcId) { view = { name: 'pc-form', aulaId, pcId: pcId || null }; render(); window.scrollTo(0, 0); }
+
+      document.getElementById('btn-back').addEventListener('click', () => {
+        if (view.name === 'aula') goHome();
+        else if (view.name === 'aula-form') view.aulaId ? goAula(view.aulaId) : goHome();
+        else if (view.name === 'pc-form') goAula(view.aulaId);
+      });
+
+      // ---------- RENDER PRINCIPAL ----------
+      function render() {
+        const app = document.getElementById('app');
+        const backBtn = document.getElementById('btn-back');
+        const titleEl = document.getElementById('topbar-title');
+        const fabBar = document.getElementById('fab-bar');
+        const fabContent = document.getElementById('fab-content');
+
+        fabBar.classList.add('hidden');
+        fabContent.innerHTML = '';
+
+        if (view.name === 'home') {
+          backBtn.classList.add('hidden');
+          titleEl.textContent = 'Inventario de Aulas';
+          renderHome(app, fabBar, fabContent);
+        } else if (view.name === 'aula') {
+          const aula = getAula(view.aulaId);
+          if (!aula) { goHome(); return; }
+          backBtn.classList.remove('hidden');
+          titleEl.textContent = `Aula ${aula.numero}`;
+          renderAulaDetail(app, aula, fabBar, fabContent);
+        } else if (view.name === 'aula-form') {
+          backBtn.classList.remove('hidden');
+          titleEl.textContent = view.aulaId ? 'Editar Aula' : 'Nueva Aula';
+          renderAulaForm(app, view.aulaId ? getAula(view.aulaId) : null);
+        } else if (view.name === 'pc-form') {
+          const aula = getAula(view.aulaId);
+          if (!aula) { goHome(); return; }
+          backBtn.classList.remove('hidden');
+          const pc = view.pcId ? (aula.computadoras || []).find(p => p.id === view.pcId) : null;
+          titleEl.textContent = pc ? `Revisar ${pc.codigo}` : 'Nueva Computadora';
+          renderPcForm(app, aula, pc);
+        }
+      }
+
+      // ---------- VISTA: INICIO ----------
+      function renderHome(app, fabBar, fabContent) {
+        const totalAulas = data.aulas.length;
+        let totalPcs = 0;
+        let badPcs = 0;
+        data.aulas.forEach(a => {
+          const pcs = a.computadoras || [];
+          totalPcs += pcs.length;
+          pcs.forEach(pc => { if (hasBadPeripheral(pc)) badPcs++; });
+        });
+
+        const filtered = data.aulas.filter(a =>
+          (a.numero || '').toLowerCase().includes(searchAula.trim().toLowerCase())
+        );
+
+        let html = `
+          <div class="summary-grid">
+            <div class="stat-box">
+              <span class="stat-num">${totalAulas}</span>
+              <span class="stat-label">Aulas</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num">${totalPcs}</span>
+              <span class="stat-label">Total PCs</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num ${badPcs > 0 ? 'danger' : ''}">${badPcs}</span>
+              <span class="stat-label">Con fallas</span>
+            </div>
+          </div>
+
+          <input type="search" id="search-aula" class="search-box" placeholder="Buscar aula por número..." value="${esc(searchAula)}" />
+        `;
+
+        if (filtered.length === 0) {
+          html += `
+            <div class="empty">
+              <span class="empty-icon">🏫</span>
+              <strong>${totalAulas === 0 ? 'Aún no hay aulas registradas' : 'No se encontraron aulas'}</strong>
+              <p style="margin:6px 0 0;font-size:0.9rem;">
+                ${totalAulas === 0 ? 'Toca "Agregar aula" para comenzar el inventario.' : 'Prueba con otro número de aula.'}
+              </p>
+            </div>
+          `;
+        } else {
+          filtered.forEach(aula => {
+            const pcs = aula.computadoras || [];
+            const revisadas = pcs.filter(isPcReviewed).length;
+            const total = Math.max(pcs.length, Number(aula.totalComputadoras) || 0);
+            const pct = total > 0 ? Math.min(100, Math.round((revisadas / total) * 100)) : 0;
+            const isDone = total > 0 && revisadas >= total;
+            const aulaBad = pcs.filter(hasBadPeripheral).length;
+
+            const chips = [];
+            if (aula.proyector?.tiene) chips.push(`<span class="chip">📽️ Proyector (${aula.proyector.cantidad || 1})</span>`);
+            if (aula.impresora?.tiene) chips.push(`<span class="chip">🖨️ Impresora (${aula.impresora.cantidad || 1})</span>`);
+            if (aula.tv?.tiene) chips.push(`<span class="chip">📺 TV (${aula.tv.cantidad || 1})</span>`);
+            if (aula.sillas?.tiene) chips.push(`<span class="chip ${condClass(aula.sillas.condicion)}">🪑 Sillas: ${aula.sillas.cantidad || 0} (${aula.sillas.condicion})</span>`);
+            if (aula.mesas?.tiene) chips.push(`<span class="chip ${condClass(aula.mesas.condicion)}">🪵 Mesas: ${aula.mesas.cantidad || 0} (${aula.mesas.condicion})</span>`);
+            if (aulaBad > 0) chips.push(`<span class="chip bad">⚠️ ${aulaBad} PC con falla</span>`);
+
+            html += `
+              <div class="card" data-open-aula="${esc(aula.id)}" style="cursor:pointer;">
+                <div class="item-header">
+                  <h2 class="item-title">Aula ${esc(aula.numero)}</h2>
+                  <span class="chip ${isDone ? 'ok' : 'info'}">${revisadas} / ${total} revisadas</span>
+                </div>
+                <div class="progress-wrap">
+                  <div class="progress-bar">
+                    <div class="progress-fill ${isDone ? 'done' : ''}" style="width:${pct}%"></div>
+                  </div>
+                </div>
+                ${chips.length ? `<div class="chips">${chips.join('')}</div>` : ''}
+              </div>
+            `;
+          });
+        }
+
+        html += `
+          <div class="section-title">Respaldo y Exportación</div>
+          <div class="card">
+            <div class="backup-grid">
+              <button id="btn-export-json" class="btn-secondary btn-sm">⬇️ Exportar copia</button>
+              <button id="btn-import-json" class="btn-secondary btn-sm">⬆️ Importar copia</button>
+              <button id="btn-export-csv" class="btn-secondary btn-sm full">📊 Exportar a Excel (CSV)</button>
+            </div>
+          </div>
+        `;
+
+        app.innerHTML = html;
+
+        fabBar.classList.remove('hidden');
+        fabContent.innerHTML = `<button id="btn-add-aula" class="btn-primary">+ Agregar aula</button>`;
+        document.getElementById('btn-add-aula').addEventListener('click', () => goAulaForm(null));
+
+        const searchInput = document.getElementById('search-aula');
+        searchInput.addEventListener('input', (e) => {
+          searchAula = e.target.value;
+          const pos = e.target.selectionStart;
+          render();
+          const newInput = document.getElementById('search-aula');
+          if (newInput) { newInput.focus(); newInput.setSelectionRange(pos, pos); }
+        });
+
+        app.querySelectorAll('[data-open-aula]').forEach(el => {
+          el.addEventListener('click', () => goAula(el.dataset.openAula));
+        });
+
+        document.getElementById('btn-export-json').addEventListener('click', exportJSON);
+        document.getElementById('btn-import-json').addEventListener('click', triggerImportJSON);
+        document.getElementById('btn-export-csv').addEventListener('click', exportCSV);
+      }
+
+      // ---------- VISTA: DETALLE DE AULA ----------
+      function renderAulaDetail(app, aula, fabBar, fabContent) {
+        const pcs = aula.computadoras || [];
+        const revisadas = pcs.filter(isPcReviewed).length;
+        const total = Math.max(pcs.length, Number(aula.totalComputadoras) || 0);
+        const pct = total > 0 ? Math.min(100, Math.round((revisadas / total) * 100)) : 0;
+        const isDone = total > 0 && revisadas >= total;
+
+        const eqChips = [];
+        eqChips.push(`<span class="chip">📽️ Proyector: ${aula.proyector?.tiene ? 'Sí (' + (aula.proyector.cantidad || 1) + ')' : 'No'}</span>`);
+        eqChips.push(`<span class="chip">🖨️ Impresora: ${aula.impresora?.tiene ? 'Sí (' + (aula.impresora.cantidad || 1) + ')' : 'No'}</span>`);
+        eqChips.push(`<span class="chip">📺 TV: ${aula.tv?.tiene ? 'Sí (' + (aula.tv.cantidad || 1) + ')' : 'No'}</span>`);
+        eqChips.push(aula.sillas?.tiene
+          ? `<span class="chip ${condClass(aula.sillas.condicion)}">🪑 Sillas: ${aula.sillas.cantidad || 0} (${aula.sillas.condicion})</span>`
+          : `<span class="chip">🪑 Sillas: No</span>`);
+        eqChips.push(aula.mesas?.tiene
+          ? `<span class="chip ${condClass(aula.mesas.condicion)}">🪵 Mesas: ${aula.mesas.cantidad || 0} (${aula.mesas.condicion})</span>`
+          : `<span class="chip">🪵 Mesas: No</span>`);
+
+        const filteredPcs = pcs.filter(p =>
+          (p.codigo || '').toLowerCase().includes(searchPc.trim().toLowerCase())
+        );
+
+        let html = `
+          <div class="card">
+            <div class="progress-wrap" style="margin-top:0;">
+              <div class="progress-meta">
+                <span>Computadoras revisadas</span>
+                <span>${revisadas} de ${total}</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill ${isDone ? 'done' : ''}" style="width:${pct}%"></div>
+              </div>
+            </div>
+            <div class="chips">${eqChips.join('')}</div>
+            <div class="item-actions">
+              <button id="btn-edit-aula" class="btn-secondary btn-sm">✏️ Editar aula</button>
+              <button id="btn-del-aula" class="btn-danger-outline btn-sm">🗑️ Eliminar</button>
+            </div>
+          </div>
+
+          <div class="section-title">Computadoras del aula (${pcs.length})</div>
+          <input type="search" id="search-pc" class="search-box" placeholder="Buscar computadora por código (ej. pc1, jo1)..." value="${esc(searchPc)}" />
+        `;
+
+        if (filteredPcs.length === 0) {
+          html += `
+            <div class="empty">
+              <span class="empty-icon">💻</span>
+              <strong>${pcs.length === 0 ? 'Sin computadoras en esta aula' : 'No se encontró ese código'}</strong>
+              <p style="margin:6px 0 0;font-size:0.9rem;">
+                ${pcs.length === 0 ? 'Edita el aula para indicar la cantidad o agrega una manualmente.' : 'Verifica el código buscado.'}
+              </p>
+            </div>
+          `;
+        } else {
+          filteredPcs.forEach(pc => {
+            const reviewed = isPcReviewed(pc);
+            const bad = hasBadPeripheral(pc);
+            const cardClass = !reviewed ? 'pending' : (bad ? 'has-bad' : 'reviewed');
+            const monTiene = pc.monitor ? (pc.monitor.tiene !== false) : false;
+
+            const specs = [];
+            if (pc.procesador) specs.push(esc(pc.procesador));
+            if (pc.ram) specs.push(`${esc(pc.ram)} GB RAM`);
+            if (pc.almacenamiento?.capacidad) {
+              specs.push(`${esc(pc.almacenamiento.capacidad)} ${esc(pc.almacenamiento.unidad || 'GB')} ${pc.almacenamiento.tipo === 'Sólido SSD' ? 'SSD' : 'HDD'}`);
+            }
+
+            html += `
+              <div class="card ${cardClass}">
+                <div class="item-header">
+                  <div>
+                    <h3 class="item-title">💻 ${esc(pc.codigo || 'Sin código')}</h3>
+                    <div style="font-size:0.86rem;color:var(--text-muted);margin-top:3px;">
+                      ${!reviewed ? 'Toca "Revisar" para cargar sus componentes' : (specs.length ? specs.join(' • ') : 'Revisada (sin specs detalladas)')}
+                    </div>
+                  </div>
+                  ${!reviewed
+                    ? '<span class="chip warn">⏳ Pendiente</span>'
+                    : (bad ? '<span class="chip bad">⚠️ Falla</span>' : '<span class="chip ok">✓ Revisada</span>')}
+                </div>
+
+                ${reviewed ? `
+                  <div class="chips">
+                    <span class="chip">Placa: ${esc(pc.video || 'Integrada')}</span>
+                    <span class="chip ${pc.internet ? 'ok' : 'warn'}">Internet: ${pc.internet ? 'Sí' : 'No'}</span>
+                    ${pc.fuenteWatts ? `<span class="chip">Fuente: ${esc(pc.fuenteWatts)}W</span>` : ''} <span class="chip ${pc.teclado?.tiene ? condClass(pc.teclado.condicion) : 'warn'}"> Teclado: ${pc.teclado?.tiene ? esc(pc.teclado.condicion) : 'No'} </span> <span class="chip ${pc.mouse?.tiene ? condClass(pc.mouse.condicion) : 'warn'}"> Mouse: ${pc.mouse?.tiene ? esc(pc.mouse.condicion) : 'No'} </span> <span class="chip ${monTiene ? condClass(pc.monitor?.condicion) : 'warn'}"> Monitor: ${monTiene ? `${esc(pc.monitor?.modelo || 'Sí')} ${pc.monitor?.pulgadas ? esc(pc.monitor.pulgadas) + '"' : ''} (${esc(pc.monitor?.condicion || 'Buena')})` : 'No'}
+                    </span>
+                  </div>
+                  ${pc.observaciones ? `<div style="margin-top:10px;font-size:0.86rem;color:var(--text-muted);background:var(--surface-alt);padding:8px 10px;border-radius:8px;">📝 ${esc(pc.observaciones)}</div>` : ''}
+                ` : ''}
+
+                <div class="item-actions">
+                  <button data-edit-pc="${esc(pc.id)}" class="${reviewed ? 'btn-secondary' : 'btn-primary'} btn-sm">
+                    ${reviewed ? '✏️ Editar' : '📋 Revisar PC'}
+                  </button>
+                  <button data-del-pc="${esc(pc.id)}" class="btn-danger-outline btn-sm" style="flex:0 0 auto;min-width:48px;" aria-label="Eliminar">🗑️</button>
+                </div>
+              </div>
+            `;
+          });
+        }
+
+        app.innerHTML = html;
+
+        fabBar.classList.remove('hidden');
+        fabContent.innerHTML = `<button id="btn-add-pc" class="btn-primary">+ Agregar otra computadora</button>`;
+        document.getElementById('btn-add-pc').addEventListener('click', () => goPcForm(aula.id, null));
+
+        document.getElementById('btn-edit-aula').addEventListener('click', () => goAulaForm(aula.id));
+        document.getElementById('btn-del-aula').addEventListener('click', () => {
+          confirmAction(
+            'Eliminar aula',
+            `¿Eliminar el Aula ${aula.numero} y sus ${pcs.length} computadora(s)? Esta acción no se puede deshacer.`,
+            'Eliminar',
+            () => {
+              data.aulas = data.aulas.filter(a => a.id !== aula.id);
+              saveData('Aula eliminada');
+              goHome();
+            }
+          );
+        });
+
+        const searchInput = document.getElementById('search-pc');
+        searchInput.addEventListener('input', (e) => {
+          searchPc = e.target.value;
+          const pos = e.target.selectionStart;
+          render();
+          const newInput = document.getElementById('search-pc');
+          if (newInput) { newInput.focus(); newInput.setSelectionRange(pos, pos); }
+        });
+
+        app.querySelectorAll('[data-edit-pc]').forEach(btn => {
+          btn.addEventListener('click', () => goPcForm(aula.id, btn.dataset.editPc));
+        });
+
+        app.querySelectorAll('[data-del-pc]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const pcId = btn.dataset.delPc;
+            const pc = pcs.find(p => p.id === pcId);
+            confirmAction(
+              'Eliminar computadora',
+              `¿Eliminar la computadora "${pc?.codigo || ''}" del Aula ${aula.numero}?`,
+              'Eliminar',
+              () => {
+                aula.computadoras = aula.computadoras.filter(p => p.id !== pcId);
+                aula.totalComputadoras = aula.computadoras.length;
+                saveData('Computadora eliminada');
+                render();
+              }
+            );
+          });
+        });
+      }
+
+      // ---------- VISTA: FORMULARIO DE AULA ----------
+      function renderAulaForm(app, existing) {
+        const state = existing ? JSON.parse(JSON.stringify(existing)) : {
+          id: null,
+          numero: '',
+          totalComputadoras: '',
+          prefijoPc: 'pc',
+          proyector: { tiene: false, cantidad: 1 },
+          impresora: { tiene: false, cantidad: 1 },
+          tv: { tiene: false, cantidad: 1 },
+          sillas: { tiene: false, cantidad: 1, condicion: 'Buena' },
+          mesas: { tiene: false, cantidad: 1, condicion: 'Buena' },
+          computadoras: []
+        };
+
+        state.proyector = state.proyector || { tiene: false, cantidad: 1 };
+        state.impresora = state.impresora || { tiene: false, cantidad: 1 };
+        state.tv = state.tv || { tiene: false, cantidad: 1 };
+        state.sillas = state.sillas || { tiene: false, cantidad: 1, condicion: 'Buena' };
+        state.mesas = state.mesas || { tiene: false, cantidad: 1, condicion: 'Buena' };
+
+        app.innerHTML = `
+          <form id="aula-form" class="card">
+            <div class="form-group">
+              <label class="form-label" for="f-numero">Número o nombre de aula *</label>
+              <input type="text" id="f-numero" required placeholder="Ej. 101, Lab 2, A-04" value="${esc(state.numero)}" />
+            </div>
+
+            <div class="row-2">
+              <div class="form-group">
+                <label class="form-label" for="f-total-pcs">Cantidad de PCs</label>
+                <input type="number" id="f-total-pcs" min="0" max="200" inputmode="numeric" placeholder="Ej. 10" value="${esc(state.totalComputadoras)}" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="f-prefijo">Prefijo de código</label>
+                <input type="text" id="f-prefijo" placeholder="Ej. pc, jo" value="${esc(state.prefijoPc || 'pc')}" />
+              </div>
+            </div>
+            <div class="form-hint" style="margin-top:-10px;margin-bottom:16px;">
+              Si pones 10 y prefijo "pc", se crearán automáticamente <strong>pc1 a pc10</strong> listas para revisar.
+            </div>
+
+            ${renderYesNoQty('proyector', 'Proyector', state.proyector, false)}
+            ${renderYesNoQty('impresora', 'Impresora', state.impresora, false)}${renderYesNoQty('tv', 'TV', state.tv, false)}
+            ${renderYesNoQty('sillas', 'Sillas', state.sillas, true)}${renderYesNoQty('mesas', 'Mesas', state.mesas, true)}
+
+            <button type="submit" class="btn-primary" style="margin-top:8px;">💾 Guardar aula</button>
+          </form>
+        `;
+
+        ['proyector', 'impresora', 'tv', 'sillas', 'mesas'].forEach(key => {
+          bindYesNoBlock(app, key, state[key], key === 'sillas' || key === 'mesas');
+        });
+
+        document.getElementById('aula-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const numero = document.getElementById('f-numero').value.trim();
+          if (!numero) { showToast('Ingresa el número de aula'); return; }
+
+          const targetCount = Math.max(0, Math.min(200, parseInt(document.getElementById('f-total-pcs').value, 10) || 0));
+          const prefijo = (document.getElementById('f-prefijo').value || 'pc').trim() || 'pc';
+
+          state.numero = numero;
+          state.totalComputadoras = targetCount;
+          state.prefijoPc = prefijo;
+
+          ['proyector', 'impresora', 'tv', 'sillas', 'mesas'].forEach(key => {
+            if (state[key].tiene) {
+              const qtyInput = document.getElementById(`qty-${key}`);
+              state[key].cantidad = Math.max(1, parseInt(qtyInput.value, 10) || 1);
+            } else {
+              state[key].cantidad = 0;
+            }
+          });
+
+          const pcs = existing ? (existing.computadoras || []) : [];
+
+          // Generar automáticamente las PCs faltantes hasta alcanzar targetCount
+          while (pcs.length < targetCount) {
+            const nextCode = suggestNextCode(pcs, prefijo);
+            pcs.push(createDefaultPc(nextCode, false));
+          }
+
+          state.computadoras = pcs;
+
+          if (existing) {
+            const idx = data.aulas.findIndex(a => a.id === existing.id);
+            if (idx !== -1) data.aulas[idx] = state;
+            saveData('Aula actualizada');
+            goAula(state.id);
+          } else {
+            state.id = uid();
+            data.aulas.push(state);
+            saveData(targetCount > 0 ? `Aula creada con ${targetCount} PCs` : 'Aula agregada');
+            goAula(state.id);
+          }
+        });
+      }
+
+      function renderYesNoQty(key, label, obj, withCond) {
+        return `
+          <div class="form-group">
+            <span class="form-label">${label}</span>
+            <div class="seg-group" data-yn="${key}">
+              <button type="button" class="seg-btn ${obj.tiene ? 'active' : ''}" data-val="1">Sí</button>
+              <button type="button" class="seg-btn ${!obj.tiene ? 'active' : ''}" data-val="0">No</button>
+            </div>
+            <div id="sub-${key}" class="sub-box ${obj.tiene ? '' : 'hidden'}">
+              <div class="form-group" style="margin-bottom:${withCond ? '12px' : '0'};">
+                <label class="form-label" for="qty-${key}">Cantidad</label>
+                <input type="number" id="qty-${key}" min="1" inputmode="numeric" value="${esc(obj.cantidad || 1)}" />
+              </div>
+              ${withCond ? ` <div class="form-group" style="margin-bottom:0;"> <span class="form-label">Condición general</span> ${renderCondButtons(`cond-${key}`, obj.condicion || 'Buena')}
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }
+
+      function bindYesNoBlock(root, key, obj, withCond) {
+        const group = root.querySelector(`[data-yn="${key}"]`);
+        const sub = document.getElementById(`sub-${key}`); group.querySelectorAll('button').forEach(btn => { btn.addEventListener('click', () => { obj.tiene = btn.dataset.val === '1'; group.querySelectorAll('button').forEach(b => b.classList.remove('active')); btn.classList.add('active'); sub.classList.toggle('hidden', !obj.tiene); }); }); if (withCond) bindCondButtons(root, `cond-${key}`, (val) => { obj.condicion = val; });
+      }
+
+      function renderCondButtons(groupName, current) {
+        return `
+          <div class="seg-group" data-cond="${groupName}">
+            <button type="button" class="seg-btn ${current === 'Buena' ? 'active-ok' : ''}" data-val="Buena">Buena</button>
+            <button type="button" class="seg-btn ${current === 'Regular' ? 'active-warn' : ''}" data-val="Regular">Regular</button>
+            <button type="button" class="seg-btn ${current === 'Mala' ? 'active-bad' : ''}" data-val="Mala">Mala</button>
+          </div>
+        `;
+      }
+
+      function bindCondButtons(root, groupName, onChange) {
+        const group = root.querySelector(`[data-cond="${groupName}"]`);
+        if (!group) return;
+        group.querySelectorAll('button').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const val = btn.dataset.val;
+            onChange(val);
+            group.querySelectorAll('button').forEach(b => b.classList.remove('active-ok', 'active-warn', 'active-bad'));
+            if (val === 'Buena') btn.classList.add('active-ok');
+            if (val === 'Regular') btn.classList.add('active-warn');
+            if (val === 'Mala') btn.classList.add('active-bad');
+          });
+        });
+      }
+
+      // ---------- VISTA: FORMULARIO DE COMPUTADORA ----------
+      function renderPcForm(app, aula, existing) {
+        const suggestedCode = existing ? existing.codigo : suggestNextCode(aula.computadoras || [], aula.prefijoPc);
+        const state = existing ? JSON.parse(JSON.stringify(existing)) : createDefaultPc(suggestedCode, true);
+
+        state.almacenamiento = state.almacenamiento || { capacidad: '', unidad: 'GB', tipo: 'Sólido SSD' };
+        state.teclado = state.teclado || { tiene: true, condicion: 'Buena' };
+        state.mouse = state.mouse || { tiene: true, condicion: 'Buena' };
+        state.monitor = state.monitor || { tiene: true, modelo: '', pulgadas: '', condicion: 'Buena' };
+        if (state.monitor.tiene === undefined) state.monitor.tiene = true;
+
+        // Buscar siguiente PC pendiente o siguiente en la lista
+        const pcs = aula.computadoras || [];
+        const currentIdx = existing ? pcs.findIndex(p => p.id === existing.id) : -1;
+        const nextPc = (currentIdx !== -1 && currentIdx + 1 < pcs.length) ? pcs[currentIdx + 1] : null;
+
+        app.innerHTML = `
+          <form id="pc-form" class="card">
+            <div class="form-group">
+              <label class="form-label" for="pc-codigo">Código de máquina *</label>
+              <input type="text" id="pc-codigo" required placeholder="Ej. pc1, jo1" value="${esc(state.codigo)}" />
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Placa / Tarjeta de video</span>
+              <div class="seg-group" data-seg="video">
+                <button type="button" class="seg-btn ${state.video === 'Integrada' ? 'active' : ''}" data-val="Integrada">Integrada</button>
+                <button type="button" class="seg-btn ${state.video === 'Dedicada' ? 'active' : ''}" data-val="Dedicada">Dedicada</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="pc-cpu">Procesador</label>
+              <input type="text" id="pc-cpu" placeholder="Ej. Intel Core i5-10400, Ryzen 5" value="${esc(state.procesador)}" />
+            </div>
+
+            <div class="row-2">
+              <div class="form-group">
+                <label class="form-label" for="pc-ram">RAM (GB)</label>
+                <input type="number" id="pc-ram" min="0" step="any" inputmode="decimal" placeholder="Ej. 8" value="${esc(state.ram)}" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="pc-watts">Fuente (Watts)</label>
+                <input type="number" id="pc-watts" min="0" inputmode="numeric" placeholder="Ej. 500" value="${esc(state.fuenteWatts)}" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Almacenamiento</span>
+              <div class="row-2" style="margin-bottom:8px;">
+                <input type="number" id="pc-cap" min="0" step="any" inputmode="decimal" placeholder="Capacidad (ej. 500)" value="${esc(state.almacenamiento.capacidad)}" />
+                <div class="seg-group" data-seg="unidad">
+                  <button type="button" class="seg-btn ${state.almacenamiento.unidad === 'GB' ? 'active' : ''}" data-val="GB">GB</button>
+                  <button type="button" class="seg-btn ${state.almacenamiento.unidad === 'TB' ? 'active' : ''}" data-val="TB">TB</button>
+                </div>
+              </div>
+              <div class="seg-group" data-seg="tipoDisco">
+                <button type="button" class="seg-btn ${state.almacenamiento.tipo === 'Sólido SSD' ? 'active' : ''}" data-val="Sólido SSD">Sólido SSD</button>
+                <button type="button" class="seg-btn ${state.almacenamiento.tipo === 'Mecánico HDD' ? 'active' : ''}" data-val="Mecánico HDD">Mecánico HDD</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Conexión a Internet</span>
+              <div class="seg-group" data-seg="internet">
+                <button type="button" class="seg-btn ${state.internet ? 'active' : ''}" data-val="1">Sí</button>
+                <button type="button" class="seg-btn ${!state.internet ? 'active' : ''}" data-val="0">No</button>
+              </div>
+            </div>
+
+            <!-- Monitor -->
+            <div class="form-group">
+              <span class="form-label">Monitor</span>
+              <div class="seg-group" data-seg="monitor-tiene">
+                <button type="button" class="seg-btn ${state.monitor.tiene ? 'active' : ''}" data-val="1">Sí tiene</button>
+                <button type="button" class="seg-btn ${!state.monitor.tiene ? 'active' : ''}" data-val="0">No tiene</button>
+              </div>
+              <div id="sub-monitor" class="sub-box ${state.monitor.tiene ? '' : 'hidden'}">
+                <div class="row-2" style="margin-bottom:10px;">
+                  <div>
+                    <label class="form-label" for="pc-mon-mod" style="font-size:0.84rem;">Marca / Modelo</label>
+                    <input type="text" id="pc-mon-mod" placeholder="Ej. Dell, LG" value="${esc(state.monitor.modelo)}" />
+                  </div>
+                  <div>
+                    <label class="form-label" for="pc-mon-pulg" style="font-size:0.84rem;">Pulgadas</label>
+                    <input type="number" id="pc-mon-pulg" min="0" step="any" inputmode="decimal" placeholder="Ej. 22" value="${esc(state.monitor.pulgadas)}" />
+                  </div>
+                </div>
+                <span class="form-label" style="font-size:0.84rem;">Condición del monitor</span>
+                ${renderCondButtons('monitor-cond', state.monitor.condicion || 'Buena')}
+              </div>
+            </div>
+
+            <!-- Teclado -->
+            <div class="form-group">
+              <span class="form-label">Teclado</span>
+              <div class="seg-group" data-seg="teclado-tiene">
+                <button type="button" class="seg-btn ${state.teclado.tiene ? 'active' : ''}" data-val="1">Sí tiene</button>
+                <button type="button" class="seg-btn ${!state.teclado.tiene ? 'active' : ''}" data-val="0">No tiene</button>
+              </div>
+              <div id="sub-teclado" class="sub-box ${state.teclado.tiene ? '' : 'hidden'}">
+                <span class="form-label">Condición del teclado</span>
+                ${renderCondButtons('teclado-cond', state.teclado.condicion || 'Buena')}
+              </div>
+            </div>
+
+            <!-- Mouse -->
+            <div class="form-group">
+              <span class="form-label">Mouse</span>
+              <div class="seg-group" data-seg="mouse-tiene">
+                <button type="button" class="seg-btn ${state.mouse.tiene ? 'active' : ''}" data-val="1">Sí tiene</button>
+                <button type="button" class="seg-btn ${!state.mouse.tiene ? 'active' : ''}" data-val="0">No tiene</button>
+              </div>
+              <div id="sub-mouse" class="sub-box ${state.mouse.tiene ? '' : 'hidden'}">
+                <span class="form-label">Condición del mouse</span>
+                ${renderCondButtons('mouse-cond', state.mouse.condicion || 'Buena')}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="pc-obs">Observaciones (opcional)</label>
+              <textarea id="pc-obs" placeholder="Notas, fallas específicas, cables faltantes...">${esc(state.observaciones)}</textarea>
+            </div>
+
+            ${nextPc ? `<button type="button" id="btn-save-next" class="btn-ok" style="margin-bottom:10px;">💾 Guardar y pasar a ${esc(nextPc.codigo)} →</button>` : ''}
+            <button type="submit" class="btn-primary">💾 Guardar y volver al aula</button>
+          </form>
+        `;
+
+        function bindSeg(name, onSelect) {
+          const g = app.querySelector(`[data-seg="${name}"]`);
+          g.querySelectorAll('button').forEach(b => {
+            b.addEventListener('click', () => {
+              g.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+              b.classList.add('active');
+              onSelect(b.dataset.val);
+            });
+          });
+        }
+
+        bindSeg('video', v => { state.video = v; });
+        bindSeg('unidad', v => { state.almacenamiento.unidad = v; });
+        bindSeg('tipoDisco', v => { state.almacenamiento.tipo = v; });
+        bindSeg('internet', v => { state.internet = v === '1'; });
+
+        bindSeg('monitor-tiene', v => {
+          state.monitor.tiene = v === '1';
+          document.getElementById('sub-monitor').classList.toggle('hidden', !state.monitor.tiene);
+        });
+        bindCondButtons(app, 'monitor-cond', v => { state.monitor.condicion = v; });
+
+        bindSeg('teclado-tiene', v => {
+          state.teclado.tiene = v === '1';
+          document.getElementById('sub-teclado').classList.toggle('hidden', !state.teclado.tiene);
+        });
+        bindCondButtons(app, 'teclado-cond', v => { state.teclado.condicion = v; });
+
+        bindSeg('mouse-tiene', v => {
+          state.mouse.tiene = v === '1';
+          document.getElementById('sub-mouse').classList.toggle('hidden', !state.mouse.tiene);
+        });
+        bindCondButtons(app, 'mouse-cond', v => { state.mouse.condicion = v; });
+
+        function savePc(goToNext) {
+          const codigo = document.getElementById('pc-codigo').value.trim();
+          if (!codigo) { showToast('Ingresa el código de la máquina'); return; }
+
+          state.codigo = codigo;
+          state.revisada = true;
+          state.procesador = document.getElementById('pc-cpu').value.trim();
+          state.ram = document.getElementById('pc-ram').value.trim();
+          state.fuenteWatts = document.getElementById('pc-watts').value.trim();
+          state.almacenamiento.capacidad = document.getElementById('pc-cap').value.trim();
+          state.monitor.modelo = document.getElementById('pc-mon-mod').value.trim();
+          state.monitor.pulgadas = document.getElementById('pc-mon-pulg').value.trim();
+          state.observaciones = document.getElementById('pc-obs').value.trim();
+
+          aula.computadoras = aula.computadoras || [];
+          if (existing) {
+            const idx = aula.computadoras.findIndex(p => p.id === existing.id);
+            if (idx !== -1) aula.computadoras[idx] = state;
+            saveData(`${state.codigo} guardada`);
+          } else {
+            state.id = uid();
+            aula.computadoras.push(state);
+            aula.totalComputadoras = Math.max(Number(aula.totalComputadoras) || 0, aula.computadoras.length);
+            saveData(`${state.codigo} agregada`);
+          }
+
+          if (goToNext && nextPc) {
+            goPcForm(aula.id, nextPc.id);
+          } else {
+            goAula(aula.id);
+          }
+        }
+
+        document.getElementById('pc-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          savePc(false);
+        });
+
+        const btnNext = document.getElementById('btn-save-next');
+        if (btnNext) {
+          btnNext.addEventListener('click', () => savePc(true));
+        }
+      }
+
+      if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      }
+
+      loadData();
+      render();
+    })();
+  </script>
+</body>
+</html>
